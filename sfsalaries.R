@@ -58,3 +58,25 @@ yfit<-dnorm(xfit,mean=mean(sfsalaries_filtered_na$BasePay),sd=sd(sfsalaries_filt
 yfit <- yfit*diff(h$mids[1:2])*length(sfsalaries_filtered_na$BasePay) 
 lines(xfit, yfit, col="blue", lwd=2)
 
+library(e1071)
+skewness(sfsalaries_filtered_na$BasePay)
+skewness(sfsalaries_filtered_na$TotalPayBenefits)
+
+sfsalaries_filtered_na[sfsalaries_filtered_na$OvertimePay < 0, c("JobTitle", "EmployeeName")]
+sfsalaries_filtered_na[sfsalaries_filtered_na$OvertimePay < 0, c("JobTitle", "EmployeeName", "OvertimePay")]
+# Below one inserts NA and converts numeric to character values
+sfsalaries_filtered_na[sfsalaries_filtered_na$OvertimePay < 0, "OvertimePay"] <- "NA"
+# to convert OvertimePay back to numeric
+sfsalaries_filtered_na$OvertimePay <- as.numeric(sfsalaries_filtered_na$OvertimePay)
+sfsalaries_filtered_na <- na.omit(sfsalaries_filtered_na)
+summary(sfsalaries_filtered_na)
+means_totalpaybenefits <- tapply(sfsalaries_filtered_na$TotalPayBenefits, sfsalaries_filtered_na$Year, mean)
+means_totalpaybenefits
+# toupper - to convert all job titles to upper case to avoid duplicates
+sfsalaries_filtered_na$JobTitle <- toupper(sfsalaries_filtered_na$JobTitle)
+# calculate mean salary for each job title
+mean_salary_title <- tapply(sfsalaries_filtered_na$TotalPayBenefits, sfsalaries_filtered_na$JobTitle, mean)
+#least salaries and their titles
+head(sort(mean_salary_title))
+# highest salaries and their titles
+tail(sort(mean_salary_title))
